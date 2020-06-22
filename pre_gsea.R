@@ -1,6 +1,26 @@
-# example ---
-# test <- pre_gsea("PRAD", "T280760")
-# Function to process expression data for sg_GSEA function ---
+#' process expression data for sg_GSEA function
+#' 
+#' Find TCGA samples appear both in RNAseq expression (FPKM) data frame and lncRNAs 
+#' data frame, if the sample ids are different, use tcga.meta.info to match. 
+#' 
+#' @param cohort A character string which is the short name for cohorts in TCGA
+#' @param t_id A character string of transcript id, either start with ENST or T
+#' 
+#' @return A data frame of lncRNA's transcript and other genes' expression in interested cohort
+#' 
+#' @import data.table
+#' @import stringr
+#' @import dplyr
+#' 
+#' @details cohort should be one of studies in TCGA, for example, "PRAD" can be used as 
+#'          the function's input to stand for prostate cancer; t_id can be from mitranscriptome
+#'          database or reflnc database. 
+#' 
+#' @example 
+#' pre_gsea("PRAD", "T280760")
+#' pre_gsea("BRCA","ENST00000430998")
+#' 
+#' @export
 pre_gsea <- function(cohort, t_id){
  
     dataDir <- path.expand("~/Projects/sgGSEA")
@@ -38,7 +58,9 @@ pre_gsea <- function(cohort, t_id){
             "grep transcript_id %s",
             paste(dataFiles, collapse = " ")
         )
-    } else { message("Can not find the input t_id in the package database.")}
+    } else { message("Can not find the input t_id in the package database.
+                     Users should provide their lncRNAs expression matrix for 
+                     TCGA samples.")}
     
     
     command <- sprintf(
