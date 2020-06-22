@@ -1,8 +1,28 @@
-# example: 
-sg_gsea(tid_cohort = test, t_id = "T280760", cohort="PRAD", method = "logFC", 
-        geneset = paste0(dataDir, "/gmt/h.all.v7.0.symbols.gmt"),
-        pathway = NULL) #"HALLMARK_E2F_TARGETS"
-
+#' Single lncRNA Gene Set Enrichment Analysis
+#' 
+#' TCGA samples are either stratified by lncRNA's expression and then calculate
+#' logFC of high vs low express groups, or calculate correlation of genes' expression
+#' with lncRNA's expression, pre-ranked file will be used for pre ranked GSEA using fgsea
+#' 
+#' @param tid_cohort A output of data frame from pre_gsea function
+#' @param t_id A string of character, showing transcript id, same as pre_gsea
+#' @param method A string of character, showing which metric is used for rank
+#' @param cohort A string of character, showing one of TCGA studies
+#' @param geneset A string of character, showing the path where gmt is 
+#' @param pathway A string of character, showing one of pathway in the gmt file
+#' 
+#' @import tibble
+#' @import fgsea
+#' @import data.table
+#' 
+#' @return A dataframe showing the GSEA results,if pathway is not null, its enrichment plot 
+#'         will be produced too.
+#'         
+#' @example 
+#' sg_gsea(tid_cohort = test, t_id = "ENST00000430998", cohort = "BRCA", method = "logFC",
+#'         geneset = "/Users/yren/Projects/sgGSEA/gmt/h.all.v7.0.symbols.gmt",
+#'         pathway = NULL)
+#' @export
 sg_gsea <- function(tid_cohort, t_id, method, cohort, geneset, pathway = NULL)
     {
     # tid_cohort <- reflncT.tid.pradT
