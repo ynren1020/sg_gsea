@@ -23,9 +23,9 @@
 #'         geneset = "/Users/yren/Projects/sgGSEA/gmt/h.all.v7.0.symbols.gmt",
 #'         pathway = NULL)
 #' @export
-sg_gsea <- function(tid_cohort, t_id, method, cohort, geneset, pathway = NULL)
+sg_gsea <- function(cohort, t_id, method, geneset, pathway = NULL)
     {
-    # tid_cohort <- reflncT.tid.pradT
+    tid_cohort <- pre_gsea(cohort, t_id)
     
     if (method == "logFC") {
     tid_cohort$group <- ifelse(tid_cohort[[2]] > median(tid_cohort[[2]]), "high", "low")
