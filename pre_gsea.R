@@ -51,7 +51,7 @@ pre_gsea <- function(cohort, t_id){
             paste(dataFiles, collapse = " ")
         )
     } else if (any(grepl(t_id, mich[[1]]))) {
-        dataFiles <- dir(dataDir, pattern = "fpkm.tsv$", full.names = TRUE) 
+        dataFiles <- dir(dataDir, pattern = "PRCAT47.fpkm.tsv$", full.names = TRUE) 
         meta <- data.table::fread(paste0(dataDir, "/library_info.txt"))
         # header ---
         command0 <- sprintf(
@@ -89,11 +89,13 @@ pre_gsea <- function(cohort, t_id){
     } else {
         t_dt$library_id <- rownames(t_dt)
         t_dt.join <- dplyr::left_join(t_dt, meta, by = "library_id")
-        t_dt.join.sub <- t_dt.join[,c("tcga_legacy_sample_id",t_id)]
+        #t_dt.join.sub <- t_dt.join[,c("tcga_legacy_sample_id",t_id)]
+        t_dt.join.sub <- t_dt.join[,c(13,1)]
         tid_cohort <- na.omit(dplyr::full_join(t_dt.join.sub, cohortT,
                                                by = c("tcga_legacy_sample_id" = "patient_id")))
     }
     
+    names(tid_cohort)[1] <- "patient_id"
     return(tid_cohort)
     
         
