@@ -1,7 +1,11 @@
 #' plot enriched pathways 
 #' A function to plot enriched pathways, y axis should be normalized enrichment 
 #' score, x axis should rank by NES.
-#' @param 
+#' @param gsea.df A data frame, output from sg_gsea function
+#' @param pathway.list Pathways user provided to label, a character variable
+#' @param direction Specify pos or neg or both enriched pathway to be labelled
+#' @param n a number defining how many pos or neg or both pathways to label
+#' @param ... other parameters to adjust plot 
 #' 
 #' @details
 #' 
@@ -9,7 +13,7 @@
 #' @import RColorBrewer 
 #' @import ggrepel
 #'     
-#' @return 
+#' @return A pdf plot with NES as y axis and sign(NES)*(-log10(FDR)) as x axis
 #' 
 #' @example 
 #' 
