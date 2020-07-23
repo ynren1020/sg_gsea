@@ -10,6 +10,7 @@
 #' @param cohort A string of character, showing one of TCGA studies
 #' @param geneset A string of character, showing the path where gmt is 
 #' @param pathway A string of character, showing one of pathway in the gmt file
+#' @param genelist TRUE or FALSE for output ordered gene list or not 
 #' 
 #' @import tibble
 #' @import fgsea
@@ -19,13 +20,14 @@
 #'         will be produced too.
 #'         
 #' @example 
-#' sg_gsea(tid_cohort = test, t_id = "ENST00000430998", cohort = "BRCA", method = "logFC",
+#' sg_gsea(tid_cohort = test, method = "logFC",
 #'         geneset = "/Users/yren/Projects/sgGSEA/gmt/h.all.v7.0.symbols.gmt",
 #'         pathway = NULL)
 #' @export
-sg_gsea <- function(cohort, t_id, method, geneset, pathway = NULL)
+sg_gsea <- function(tid_cohort, metric="logFC", genelist = FALSE, geneset, pathway = NULL)
     {
-    tid_cohort <- pre_gsea(cohort, t_id)
+    cohort <- names(tid_cohort)[1]
+    t_id <- names(tid_cohort)[2]
     
     if (method == "logFC") {
     tid_cohort$group <- ifelse(tid_cohort[[2]] > median(tid_cohort[[2]]), "high", "low")
@@ -43,8 +45,7 @@ sg_gsea <- function(cohort, t_id, method, geneset, pathway = NULL)
     resT$genes <- rownames(resT)
     resT <- resT[ ,c(5,4)]
     resT <-resT[order(-resT[,2]),] # log2FC decrease 
-    resT
-    
+   
     # gsea using fgsea -----
     ranks <- tibble::deframe(resT)
     #head(ranks, 20)
@@ -60,10 +61,15 @@ sg_gsea <- function(cohort, t_id, method, geneset, pathway = NULL)
         res$genes <- rownames(res)
         res <- res[ ,c(2,1)]
         res<-res[order(-res[,2]),] # cor decrease 
-        res
         
         # gsea using fgsea -----
         ranks <- tibble::deframe(res)
+    }
+    
+    if (genelist == TRUE){
+    ranks.df <- data.frame(gene_name=names(ranks), ranks=ranks)
+    write.table(ranks.df,paste0(t_id, "_", cohort, "_", metric, ".orderedgene.txt"),
+                quote=FALSE, col.names = TRUE, row.names = FALSE,sep="\t")
     }
     # Load the pathways into a named list-----
     pathways.hallmark <- fgsea::gmtPathways(geneset) # gmt 
@@ -73,7 +79,7 @@ sg_gsea <- function(cohort, t_id, method, geneset, pathway = NULL)
      # tidy the results -----
     fgseaResTidy <- fgseaRes[order(-NES,padj),]
     print(fgseaResTidy)
-    data.table::fwrite(fgseaResTidy, paste0(t_id, "_", cohort, ".txt"),
+    data.table::fwrite(fgseaResTidy, paste0(t_id, "_", cohort, "_", method, ".txt"),
                        col.names = TRUE, row.names = FALSE, sep = "\t", quote = FALSE)
     
     
